@@ -1,66 +1,385 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+StoreMarket
+Sistema de gerenciamento de produtos desenvolvido com Laravel, utilizando PHP, PostgreSQL, Blade, Eloquent ORM e Materialize CSS.
+O projeto foi desenvolvido com objetivo de praticar a criação de um CRUD completo no Laravel.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+📋 Sobre o projeto
+O StoreMarket é um sistema simples para gerenciamento de produtos.
+A aplicação permite realizar as principais operações de um CRUD:
+Criar produtos
+Listar produtos
+Visualizar detalhes de um produto
+Editar produtos
+Excluir produtos
+Validar informações
+Exibir mensagens de sucesso
+Utilizar banco de dados PostgreSQL
 
-## About Laravel
+🚀 Tecnologias utilizadas
+PHP
+Laravel
+Laravel Blade
+Eloquent ORM
+PostgreSQL
+Materialize CSS
+HTML5
+CSS3
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+📦 Funcionalidades
+Cadastro de produtos
+É possível cadastrar um produto informando:
+Nome
+Descrição
+Preço
+Estoque
+Listagem
+A página principal apresenta todos os produtos cadastrados.
+São exibidas as informações:
+ID
+Nome
+Preço
+Estoque
+Também existem ações para:
+Visualizar
+Editar
+Excluir
+Visualização
+É possível visualizar os detalhes de um produto individualmente.
+Edição
+Os dados de um produto existente podem ser alterados.
+Exclusão
+Um produto pode ser removido do banco de dados.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+🗂️ Estrutura principal
+A estrutura utilizada no projeto segue o padrão MVC do Laravel:
+storeMarket/
+│
+├── app/
+│   ├── Http/
+│   │   └── Controllers/
+│   │       └── ProductController.php
+│   │
+│   └── Models/
+│       ├── Product.php
+│       └── User.php
+│
+├── database/
+│   └── migrations/
+│
+├── resources/
+│   └── views/
+│       └── products/
+│           ├── create.blade.php
+│           ├── edit.blade.php
+│           ├── index.blade.php
+│           └── show.blade.php
+│
+├── routes/
+│   └── web.php
+│
+├── .env
+├── artisan
+├── composer.json
+└── README.md
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+🧩 Arquitetura MVC
+O projeto utiliza o padrão MVC (Model-View-Controller).
+                    NAVEGADOR
+                        │
+                        ▼
+                      ROUTES
+                   routes/web.php
+                        │
+                        ▼
+                   CONTROLLER
+              ProductController.php
+                        │
+                        ▼
+                     MODEL
+                   Product.php
+                        │
+                        ▼
+                   PostgreSQL
+                        │
+                        ▼
+                      VIEW
+                Blade / HTML
+                        │
+                        ▼
+                    NAVEGADOR
+Model
+O Model responsável pelos produtos é:
+app/Models/Product.php
+Ele utiliza o Eloquent ORM para trabalhar com o banco de dados.
+Os campos permitidos para preenchimento são:
+protected $fillable = [
+    'name',
+    'price',
+    'description',
+    'stock'
+];
+Controller
+O Controller está localizado em:
+app/Http/Controllers/ProductController.php
+Ele possui os métodos responsáveis pelas operações do CRUD:
+index()
+create()
+store()
+show()
+edit()
+update()
+destroy()
+Views
+As Views estão localizadas em:
+resources/views/products/
+Arquivos:
+create.blade.php
+edit.blade.php
+index.blade.php
+show.blade.php
 
-## Learning Laravel
+🛣️ Rotas
+O projeto utiliza Route::resource():
+Route::resource('products', ProductController::class);
+Essa única declaração cria as rotas necessárias para o CRUD.
+Método
+URL
+Controller
+Função
+GET
+/products
+index
+Lista produtos
+GET
+/products/create
+create
+Formulário de cadastro
+POST
+/products
+store
+Salva produto
+GET
+/products/{product}
+show
+Exibe produto
+GET
+/products/{product}/edit
+edit
+Formulário de edição
+PUT/PATCH
+/products/{product}
+update
+Atualiza produto
+DELETE
+/products/{product}
+destroy
+Exclui produto
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Para visualizar todas as rotas:
+php artisan route:list
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+📝 Validação
+Os dados são validados no ProductController.
+$request->validate([
+    'name' => 'required|string|max:75',
+    'description' => 'nullable|string',
+    'price' => 'required|numeric|min:0',
+    'stock' => 'required|integer|min:0',
+]);
+Regras
+Nome
+required
+string
+max:75
+O nome é obrigatório e pode possuir no máximo 75 caracteres.
+Descrição
+nullable|string
+A descrição é opcional.
+Preço
+required|numeric|min:0
+O preço:
+É obrigatório
+Deve ser numérico
+Não pode ser negativo
+Estoque
+required|integer|min:0
+O estoque:
+É obrigatório
+Deve ser um número inteiro
+Não pode ser negativo
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+🗄️ Banco de dados
+O projeto utiliza PostgreSQL.
+Configuração utilizada no .env:
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=storeMarket
+DB_USERNAME=postgres
+DB_PASSWORD=sua_senha
+Não compartilhe sua senha real do banco de dados em um repositório público.
+Crie o banco de dados:
+storeMarket
+Depois execute:
+php artisan migrate
 
-## Laravel Sponsors
+⚙️ Instalação
+1. Clonar o projeto
+git clone URL_DO_REPOSITORIO
+Entre na pasta:
+cd storeMarket
+2. Instalar dependências
+composer install
+3. Criar o arquivo .env
+No Windows, copie:
+.env.example
+para:
+.env
+No terminal também pode ser utilizado:
+copy .env.example .env
+4. Gerar a chave da aplicação
+php artisan key:generate
+5. Configurar o banco
+Edite o arquivo:
+.env
+e configure o PostgreSQL:
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=storeMarket
+DB_USERNAME=postgres
+DB_PASSWORD=sua_senha
+6. Executar as migrations
+php artisan migrate
+7. Iniciar o servidor
+php artisan serve
+Acesse no navegador:
+http://127.0.0.1:8000
+A rota / redireciona automaticamente para:
+http://127.0.0.1:8000/products
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+🎨 Materialize CSS
+O projeto utiliza o Materialize CSS para estilização da interface.
+O CSS é carregado através de CDN:
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
+>
+Os ícones do Material Icons também são utilizados:
+<link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+>
 
-### Premium Partners
+🔐 Proteção dos formulários
+Os formulários utilizam proteção CSRF através do Blade:
+@csrf
+Para atualizar um produto:
+@method('PUT')
+Para excluir:
+@method('DELETE')
+Isso permite que o Laravel trate corretamente os métodos HTTP utilizados pelo CRUD.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+🔄 Funcionamento do CRUD
+Criar
+Formulário
+    ↓
+POST /products
+    ↓
+ProductController@store
+    ↓
+Validação
+    ↓
+Product::create()
+    ↓
+PostgreSQL
+Listar
+GET /products
+    ↓
+ProductController@index
+    ↓
+Product::all()
+    ↓
+products.index
+    ↓
+Lista de produtos
+Visualizar
+GET /products/{product}
+    ↓
+ProductController@show
+    ↓
+Product Model
+    ↓
+products.show
+Editar
+GET /products/{product}/edit
+    ↓
+ProductController@edit
+    ↓
+products.edit
+    ↓
+PUT /products/{product}
+    ↓
+ProductController@update
+    ↓
+$product->update()
+Excluir
+DELETE /products/{product}
+    ↓
+ProductController@destroy
+    ↓
+$product->delete()
+    ↓
+PostgreSQL
 
-## Contributing
+🧰 Comandos úteis
+Iniciar servidor:
+php artisan serve
+Ver rotas:
+php artisan route:list
+Criar Model:
+php artisan make:model Product
+Criar Model com Migration:
+php artisan make:model Product -m
+Criar Controller Resource:
+php artisan make:controller ProductController --resource
+Executar migrations:
+php artisan migrate
+Ver status das migrations:
+php artisan migrate:status
+Limpar caches:
+php artisan optimize:clear
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+⚠️ Atenção ao .env
+O arquivo .env contém informações sensíveis, principalmente:
+DB_USERNAME=postgres
+DB_PASSWORD=sua_senha
+Não coloque o .env no GitHub.
+O .gitignore do Laravel normalmente já contém:
+.env
+.env.backup
+.env.production
+O repositório deve utilizar:
+.env.example
+como modelo de configuração.
 
-## Code of Conduct
+🎯 Objetivo do projeto
+O objetivo do StoreMarket é praticar conceitos fundamentais do desenvolvimento web com Laravel:
+MVC
+Rotas
+Controllers
+Models
+Eloquent ORM
+Migrations
+PostgreSQL
+Blade
+Forms
+Validação
+CRUD
+Route Model Binding
+Materialize CSS
+Proteção CSRF
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+👨‍💻 Autor
+Eldis Nogueira
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Projeto desenvolvido para fins de estudo e prática com Laravel.
