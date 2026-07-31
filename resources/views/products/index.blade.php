@@ -87,6 +87,9 @@
 
     @endif
 
+    <!--Link para paginação-->
+    <span style="text-align:center;">{{$products->links()}}</span>
+
     <a href="{{ route('products.create') }}">
         Cadastrar Produto
     </a>
