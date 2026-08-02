@@ -1,24 +1,12 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Editar Produto</title>
+@extends('layouts.base')
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-</head>
-<body>
+@section('title', 'Editar produtos')
+
+@section('content')
 
     <h1>Editar Produto</h1>
 
-    @if($errors->any())
-
-        <ul>
-            @foreach($errors->all() as $erro)
-                <li>{{ $erro }}</li>
-            @endforeach
-        </ul>
-
-    @endif
+    <x-validation-errors />
 
     <form
         action="{{ route('products.update', $product) }}"
@@ -85,8 +73,4 @@
         Voltar
     </a>
 
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-</body>
-</html>
+@endsection

@@ -1,26 +1,11 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Cadastrar Produto</title>
+@extends('layouts.base')
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+@section('title' , 'Cadastrar Produtos')
 
-</head>
-<body>
-
+@section('content')
     <h1>Cadastrar Produto</h1>
 
-    @if($errors->any())
-
-        <ul>
-            @foreach($errors->all() as $erro)
-                <li>{{ $erro }}</li>
-            @endforeach
-        </ul>
-
-    @endif
+    <x-validation-errors />
 
     <form action="{{ route('products.store') }}" method="POST">
 
@@ -80,8 +65,4 @@
         Voltar
     </a>
 
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-</body>
-</html>
+@endsection

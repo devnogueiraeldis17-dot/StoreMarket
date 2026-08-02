@@ -1,14 +1,6 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Produtos</title>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-</head>
-<body>
+@extends('layouts.base')
 
+@section('content')
     <h1>Produtos</h1>
 
     @if(session('success'))
@@ -50,23 +42,23 @@
 
                         <td>
 
-                            <a href="{{ route('products.show', $product) }}">
+                            <a href="{{ route('products.show', $product) }}" title="Visualizar">
                                 <i  class="material-icons">assignment</i>
                             </a>
-                            <a href="{{ route('products.edit', $product) }}" class="material-icons">
-                                create
+                            <a href="{{ route('products.edit', $product) }}" title="Editar" class="material-icons">
+                                edit
                             </a>
 
                             <form
                                 action="{{ route('products.destroy', $product) }}"
                                 method="POST"
-                                style="display:inline"
+                                style="display:inline"  onsubmit="return confirm('Deseja realmente excluir este produto?')"
                             >
 
                                 @csrf
                                 @method('DELETE')
 
-                                <button type="submit">
+                                <button type="submit" title="Excluir">
                                     <i class="material-icons">delete</i>
                                 </button>
 
@@ -93,9 +85,4 @@
     <a href="{{ route('products.create') }}">
         Cadastrar Produto
     </a>
-
-
-    <!-- Compiled and minified JavaScript -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-</body>
-</html>
+@endsection
