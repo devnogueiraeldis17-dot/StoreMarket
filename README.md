@@ -1,385 +1,502 @@
-StoreMarket
-Sistema de gerenciamento de produtos desenvolvido com Laravel, utilizando PHP, PostgreSQL, Blade, Eloquent ORM e Materialize CSS.
-O projeto foi desenvolvido com objetivo de praticar a criação de um CRUD completo no Laravel.
+# StoreMarket — CRUD de Produtos
 
-📋 Sobre o projeto
-O StoreMarket é um sistema simples para gerenciamento de produtos.
-A aplicação permite realizar as principais operações de um CRUD:
-Criar produtos
-Listar produtos
-Visualizar detalhes de um produto
-Editar produtos
-Excluir produtos
-Validar informações
-Exibir mensagens de sucesso
-Utilizar banco de dados PostgreSQL
+Projeto Laravel para praticar CRUD, MVC, Eloquent ORM, Blade, validações, rotas Resource, CSRF, componentes, layouts, paginação e formulários HTML.
 
-🚀 Tecnologias utilizadas
-PHP
-Laravel
-Laravel Blade
-Eloquent ORM
-PostgreSQL
-Materialize CSS
-HTML5
-CSS3
+## Objetivo
 
-📦 Funcionalidades
-Cadastro de produtos
-É possível cadastrar um produto informando:
-Nome
-Descrição
-Preço
-Estoque
-Listagem
-A página principal apresenta todos os produtos cadastrados.
-São exibidas as informações:
-ID
-Nome
-Preço
-Estoque
-Também existem ações para:
-Visualizar
-Editar
-Excluir
-Visualização
-É possível visualizar os detalhes de um produto individualmente.
-Edição
-Os dados de um produto existente podem ser alterados.
-Exclusão
-Um produto pode ser removido do banco de dados.
+O sistema permite cadastrar, listar, visualizar, editar e excluir produtos.
 
-🗂️ Estrutura principal
-A estrutura utilizada no projeto segue o padrão MVC do Laravel:
-storeMarket/
-│
-├── app/
-│   ├── Http/
-│   │   └── Controllers/
-│   │       └── ProductController.php
-│   │
-│   └── Models/
-│       ├── Product.php
-│       └── User.php
-│
-├── database/
-│   └── migrations/
-│
-├── resources/
-│   └── views/
-│       └── products/
-│           ├── create.blade.php
-│           ├── edit.blade.php
-│           ├── index.blade.php
-│           └── show.blade.php
-│
-├── routes/
-│   └── web.php
-│
-├── .env
-├── artisan
-├── composer.json
-└── README.md
+Cada produto possui nome, descrição, preço e estoque.
 
-🧩 Arquitetura MVC
-O projeto utiliza o padrão MVC (Model-View-Controller).
-                    NAVEGADOR
-                        │
-                        ▼
-                      ROUTES
-                   routes/web.php
-                        │
-                        ▼
-                   CONTROLLER
-              ProductController.php
-                        │
-                        ▼
-                     MODEL
-                   Product.php
-                        │
-                        ▼
-                   PostgreSQL
-                        │
-                        ▼
-                      VIEW
-                Blade / HTML
-                        │
-                        ▼
-                    NAVEGADOR
-Model
-O Model responsável pelos produtos é:
-app/Models/Product.php
-Ele utiliza o Eloquent ORM para trabalhar com o banco de dados.
-Os campos permitidos para preenchimento são:
+## 1. MVC — Model, View, Controller
+
+O projeto separa responsabilidades em três partes:
+
+- **Model:** representa os dados e a comunicação com o banco.
+- **View:** apresenta a interface ao usuário.
+- **Controller:** recebe requisições e coordena o fluxo.
+
+No projeto:
+
+
+Model      -> app/Models/Product.php
+Controller -> app/Http/Controllers/ProductController.php
+View       -> resources/views/products/
+
+
+### Por que MVC?
+
+Evita colocar banco de dados, regras e HTML no mesmo arquivo. A separação facilita manutenção, testes, organização e evolução do sistema.
+
+## 2. Eloquent ORM
+
+O Laravel utiliza o **Eloquent ORM (Object-Relational Mapping)** para trabalhar com o banco através de Models.
+
+O projeto possui:
+
+
+class Product extends Model
+
+
+Exemplos:
+
+
+Product::paginate(4);
+Product::create($request->all());
+$product->update($request->all());
+$product->delete();
+
+
+### Por que Eloquent?
+
+Porque reduz a necessidade de SQL manual, deixa o código mais legível e facilita operações CRUD e relacionamentos entre tabelas.
+
+## 3. `$fillable`
+
+No Model:
+
+```php
 protected $fillable = [
     'name',
     'price',
     'description',
     'stock'
 ];
-Controller
-O Controller está localizado em:
-app/Http/Controllers/ProductController.php
-Ele possui os métodos responsáveis pelas operações do CRUD:
-index()
-create()
-store()
-show()
-edit()
-update()
-destroy()
-Views
-As Views estão localizadas em:
-resources/views/products/
-Arquivos:
-create.blade.php
-edit.blade.php
-index.blade.php
-show.blade.php
+```
 
-🛣️ Rotas
-O projeto utiliza Route::resource():
+O `$fillable` define quais atributos podem ser usados em atribuição em massa, ajudando a controlar quais campos podem ser preenchidos através de operações como `Product::create()`.
+
+## 4. Controller e CRUD
+
+O `ProductController` possui:
+
+
+index()   -> listar
+create()  -> formulário de cadastro
+store()   -> salvar
+show()    -> visualizar
+edit()    -> formulário de edição
+update()  -> atualizar
+destroy() -> excluir
+
+
+Essa organização corresponde às operações CRUD:
+
+
+Create -> store
+Read   -> index / show
+Update -> update
+Delete -> destroy
+
+
+## 5. Route::resource()
+
+Em routes/web.php:
+
+
 Route::resource('products', ProductController::class);
-Essa única declaração cria as rotas necessárias para o CRUD.
-Método
-URL
-Controller
-Função
-GET
-/products
-index
-Lista produtos
-GET
-/products/create
-create
-Formulário de cadastro
-POST
-/products
-store
-Salva produto
-GET
-/products/{product}
-show
-Exibe produto
-GET
-/products/{product}/edit
-edit
-Formulário de edição
-PUT/PATCH
-/products/{product}
-update
-Atualiza produto
-DELETE
-/products/{product}
-destroy
-Exclui produto
 
-Para visualizar todas as rotas:
-php artisan route:list
+Essa única declaração cria as rotas principais do CRUD(Assim, evitando que tenha que se criar uma rota para cada método):
 
-📝 Validação
-Os dados são validados no ProductController.
+| Método | URL | Ação |
+|---|---|---|
+| GET | `/products | index |
+| GET | `/products/create` | create |
+| POST | `/products` | store |
+| GET | `/products/{product}` | show |
+| GET | `/products/{product}/edit` | edit |
+| PUT/PATCH | `/products/{product}` | update |
+| DELETE | `/products/{product}` | destroy |
+
+Isso evita cadastrar cada rota manualmente.
+
+## 6. Route Model Binding
+
+Métodos como:
+
+```php
+public function show(Product $product)
+```
+
+permitem ao Laravel localizar automaticamente o produto correspondente ao parâmetro da URL.
+
+Isso evita repetir manualmente:
+
+```php
+Product::findOrFail($id);
+```
+
+## 7. Blade
+
+As Views usam Blade (`.blade.php`), o sistema de templates do Laravel.
+
+Exemplo:
+
+```blade
+{{ $product->name }}
+```
+
+O Blade permite usar dados do Controller na interface e também estruturas como `@if`, `@foreach`, `@section` e `@extends`.
+
+## 8. `@extends`, `@yield` e `@section`
+
+O projeto possui um layout:
+
+
+resources/views/layouts/base.blade.php
+
+
+Nele:
+
+
+@yield('title', 'Produtos')
+@yield('content')
+
+
+As páginas utilizam:
+
+```blade
+@extends('layouts.base')
+
+@section('title', 'Cadastrar Produto')
+
+@section('content')
+    ...
+@endsection
+```
+
+### `@extends`
+
+```blade
+@extends('layouts.base')
+```
+
+Diz que a página deve utilizar o layout base.
+
+### `@yield`
+
+```blade
+@yield('content')
+```
+
+Cria uma área reservada no layout.
+
+### `@section`
+
+```blade
+@section('content')
+    ...
+@endsection
+```
+
+Preenche a área definida pelo `@yield`.
+
+### Por que usar isso?
+
+Para evitar repetir o HTML comum em todas as páginas.
+
+Isso segue o princípio:
+
+> **DRY — Don't Repeat Yourself**
+
+## 9. `@csrf`
+
+Os formulários possuem:
+
+e
+
+@csrf
+
+
+O Laravel usa o token CSRF para proteger requisições contra **Cross-Site Request Forgery**.
+
+Isso é especialmente importante em formulários que alteram dados.
+
+## 10. `@method('PUT')` e `@method('DELETE')`
+
+HTML tradicional não possui formulários com PUT e DELETE diretamente.
+
+Por isso, na edição:
+
+
+@method('PUT')
+
+
+e na exclusão:
+
+
+@method('DELETE')
+
+
+O Laravel interpreta essas diretivas e trata as requisições com os métodos correspondentes.
+
+## 11. `onsubmit` e `confirm()`
+
+Na exclusão existe:
+
+
+onsubmit="return confirm('Deseja realmente excluir este produto?')"
+
+
+`onsubmit` é executado quando o formulário é enviado.
+
+O `confirm()` pergunta ao usuário se ele realmente deseja excluir.
+
+Se clicar em **OK**, o formulário continua.
+
+Se clicar em **Cancelar**, o envio é interrompido.
+
+### Por que utilizar?
+
+A exclusão pode causar perda de dados. A confirmação reduz a possibilidade de exclusões acidentais.
+
+## 12. Validações
+
+O Controller verifica os dados recebidos:
+
+
 $request->validate([
     'name' => 'required|string|max:75',
     'description' => 'nullable|string',
     'price' => 'required|numeric|min:0',
     'stock' => 'required|integer|min:0',
 ]);
-Regras
-Nome
-required
-string
-max:75
-O nome é obrigatório e pode possuir no máximo 75 caracteres.
-Descrição
-nullable|string
-A descrição é opcional.
-Preço
-required|numeric|min:0
-O preço:
-É obrigatório
-Deve ser numérico
-Não pode ser negativo
-Estoque
-required|integer|min:0
-O estoque:
-É obrigatório
-Deve ser um número inteiro
-Não pode ser negativo
 
-🗄️ Banco de dados
-O projeto utiliza PostgreSQL.
-Configuração utilizada no .env:
-DB_CONNECTION=pgsql
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_DATABASE=storeMarket
-DB_USERNAME=postgres
-DB_PASSWORD=sua_senha
-Não compartilhe sua senha real do banco de dados em um repositório público.
-Crie o banco de dados:
-storeMarket
-Depois execute:
-php artisan migrate
 
-⚙️ Instalação
-1. Clonar o projeto
-git clone URL_DO_REPOSITORIO
-Entre na pasta:
-cd storeMarket
-2. Instalar dependências
-composer install
-3. Criar o arquivo .env
-No Windows, copie:
-.env.example
-para:
-.env
-No terminal também pode ser utilizado:
-copy .env.example .env
-4. Gerar a chave da aplicação
-php artisan key:generate
-5. Configurar o banco
-Edite o arquivo:
-.env
-e configure o PostgreSQL:
-DB_CONNECTION=pgsql
-DB_HOST=127.0.0.1
-DB_PORT=5432
-DB_DATABASE=storeMarket
-DB_USERNAME=postgres
-DB_PASSWORD=sua_senha
-6. Executar as migrations
-php artisan migrate
-7. Iniciar o servidor
-php artisan serve
-Acesse no navegador:
-http://127.0.0.1:8000
-A rota / redireciona automaticamente para:
-http://127.0.0.1:8000/products
+As regras garantem, por exemplo:
 
-🎨 Materialize CSS
-O projeto utiliza o Materialize CSS para estilização da interface.
-O CSS é carregado através de CDN:
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css"
->
-Os ícones do Material Icons também são utilizados:
-<link
-    href="https://fonts.googleapis.com/icon?family=Material+Icons"
-    rel="stylesheet"
->
+- nome obrigatório;
+- nome como texto;
+- máximo de 75 caracteres;
+- descrição opcional;
+- preço numérico e não negativo;
+- estoque inteiro e não negativo.
 
-🔐 Proteção dos formulários
-Os formulários utilizam proteção CSRF através do Blade:
-@csrf
-Para atualizar um produto:
-@method('PUT')
-Para excluir:
-@method('DELETE')
-Isso permite que o Laravel trate corretamente os métodos HTTP utilizados pelo CRUD.
+### Por que validar?
 
-🔄 Funcionamento do CRUD
-Criar
-Formulário
-    ↓
-POST /products
-    ↓
-ProductController@store
-    ↓
+Para evitar que dados inválidos sejam armazenados no banco.
+
+## 13. `@if` e `@foreach`
+
+Para verificar se existem produtos:
+
+
+@if($products->count() > 0)
+
+
+Para percorrer a lista:
+
+
+@foreach($products as $product)
+
+
+Essas estruturas deixam a View responsável pela apresentação condicional e repetitiva dos dados.
+
+## 14. `old()`
+
+Nos formulários:
+
+
+value="{{ old('name') }}"
+
+
+O `old()` recupera valores enviados anteriormente quando ocorre uma falha de validação.
+
+Isso melhora a experiência do usuário, pois ele não precisa preencher novamente todos os campos.
+
+## 15. `$errors`
+
+O Laravel disponibiliza os erros de validação através de:
+
+
+$errors
+
+
+Por isso podemos usar:
+
+
+@if($errors->any())
+
+
+e:
+
+
+@foreach($errors->all() as $erro)
+```
+
+para informar ao usuário o que precisa ser corrigido.
+
+## 16. Componente `<x-validation-errors />`
+
+O projeto utiliza:
+
+
+<x-validation-errors />
+
+
+para reutilizar a apresentação dos erros.
+
+Isso evita repetir o mesmo bloco de código nos formulários de cadastro e edição.
+
+## 17. `session('success')`
+
+Depois de uma operação, o Controller envia uma mensagem:
+
+
+->with('success', 'Produto cadastrado com sucesso!');
+
+
+A View recupera:
+
+
+@if(session('success'))
+    <p>{{ session('success') }}</p>
+@endif
+
+
+Assim o usuário recebe um retorno visual sobre o resultado da operação.
+
+## 18. `redirect()->route()`
+
+Após cadastrar, atualizar ou excluir, o Controller usa:
+
+
+return redirect()
+    ->route('products.index');
+
+
+O redirecionamento pelo nome da rota é preferível a deixar a URL fixa espalhada pelo código.
+
+## 19. Migrations
+
+A Migration define a tabela `products`:
+
+
+$table->id();
+$table->string('name');
+$table->text('description')->nullable();
+$table->decimal('price', 10, 2);
+$table->integer('stock')->default(0);
+$table->timestamps();
+
+
+Migrations permitem versionar a estrutura do banco junto com o código.
+
+## 20. Paginação
+
+O Controller utiliza:
+
+
+Product::paginate(4);
+
+
+Assim são exibidos quatro produtos por página.
+
+Na View:
+
+
+{{ $products->links() }}
+
+
+gera os links de navegação.
+
+A paginação evita carregar uma quantidade muito grande de registros de uma só vez.
+
+## 21. Materialize CSS
+
+O projeto utiliza Materialize CSS para fornecer componentes visuais e Material Icons.
+
+Exemplo:
+
+
+<i class="material-icons">delete</i>
+
+
+Isso permite melhorar a interface sem precisar criar todo o CSS manualmente.
+
+## 22. Fluxo geral da aplicação
+
+
+Usuário
+   ↓
+Rota
+   ↓
+ProductController
+   ↓
 Validação
-    ↓
-Product::create()
-    ↓
-PostgreSQL
-Listar
-GET /products
-    ↓
-ProductController@index
-    ↓
-Product::all()
-    ↓
-products.index
-    ↓
-Lista de produtos
-Visualizar
-GET /products/{product}
-    ↓
-ProductController@show
-    ↓
-Product Model
-    ↓
-products.show
-Editar
-GET /products/{product}/edit
-    ↓
-ProductController@edit
-    ↓
-products.edit
-    ↓
-PUT /products/{product}
-    ↓
-ProductController@update
-    ↓
-$product->update()
-Excluir
-DELETE /products/{product}
-    ↓
-ProductController@destroy
-    ↓
-$product->delete()
-    ↓
-PostgreSQL
+   ↓
+Product / Eloquent
+   ↓
+Banco de dados
+   ↓
+Controller
+   ↓
+Blade View
+   ↓
+Usuário
 
-🧰 Comandos úteis
-Iniciar servidor:
-php artisan serve
-Ver rotas:
-php artisan route:list
-Criar Model:
-php artisan make:model Product
-Criar Model com Migration:
-php artisan make:model Product -m
-Criar Controller Resource:
-php artisan make:controller ProductController --resource
-Executar migrations:
-php artisan migrate
-Ver status das migrations:
-php artisan migrate:status
-Limpar caches:
-php artisan optimize:clear
 
-⚠️ Atenção ao .env
-O arquivo .env contém informações sensíveis, principalmente:
-DB_USERNAME=postgres
-DB_PASSWORD=sua_senha
-Não coloque o .env no GitHub.
-O .gitignore do Laravel normalmente já contém:
-.env
-.env.backup
-.env.production
-O repositório deve utilizar:
-.env.example
-como modelo de configuração.
+## 23. Estrutura
 
-🎯 Objetivo do projeto
-O objetivo do StoreMarket é praticar conceitos fundamentais do desenvolvimento web com Laravel:
-MVC
-Rotas
-Controllers
-Models
-Eloquent ORM
-Migrations
-PostgreSQL
-Blade
-Forms
-Validação
-CRUD
-Route Model Binding
-Materialize CSS
-Proteção CSRF
 
-👨‍💻 Autor
-Eldis Nogueira
+app/
+├── Http/
+│   └── Controllers/
+│       └── ProductController.php
+└── Models/
+    └── Product.php
 
-Projeto desenvolvido para fins de estudo e prática com Laravel.
+database/
+└── migrations/
+    └── create_products_table.php
+
+resources/
+└── views/
+    ├── components/
+    │   └── validation-errors.blade.php
+    ├── layouts/
+    │   └── base.blade.php
+    └── products/
+        ├── create.blade.php
+        ├── edit.blade.php
+        ├── index.blade.php
+        └── show.blade.php
+
+routes/
+└── web.php
+
+
+## 24. Resumo
+
+| Recurso | Motivo |
+|---|---|
+| MVC | Separar responsabilidades |
+| Eloquent ORM | Facilitar acesso ao banco |
+| Model | Representar produtos |
+| Controller | Controlar requisições |
+| Blade | Criar as Views |
+| `@extends` | Reutilizar layout |
+| `@yield` | Criar áreas do layout |
+| `@section` | Preencher áreas do layout |
+| `@csrf` | Proteger formulários |
+| `@method` | Permitir PUT/DELETE |
+| `onsubmit` | Executar ação no envio |
+| `confirm()` | Confirmar exclusão |
+| `@if` | Condições na View |
+| `@foreach` | Percorrer produtos |
+| `old()` | Preservar dados do formulário |
+| `$errors` | Mostrar erros |
+| `$fillable` | Controlar atribuição em massa |
+| `Route::resource()` | Criar rotas CRUD |
+| Route Model Binding | Localizar Models automaticamente |
+| Migration | Versionar estrutura do banco |
+| Paginação | Evitar listas muito grandes |
+| Componentes Blade | Reutilizar código |
+| `redirect()->route()` | Redirecionar por nome de rota |
+| Session flash | Mostrar mensagens de resultado |
+
+## Conclusão
+
+A organização do projeto busca demonstrar não apenas como fazer um CRUD funcionar, mas como construir uma aplicação Laravel com responsabilidades separadas.
+
+Cada recurso foi utilizado com uma finalidade: o **MVC** organiza a arquitetura, o **Eloquent** facilita o acesso ao banco, o **Blade** organiza as Views, `@yield` e `@section` evitam repetição, `onsubmit` e `confirm()` protegem contra exclusões acidentais, e as validações ajudam a garantir a qualidade dos dados.
